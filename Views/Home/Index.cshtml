@@ -1,0 +1,22 @@
+﻿@using test_app.Context
+@model List<Product>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<section class="mt-3">
+    <div class="container">
+        <div class="card">
+            <div class="row p-1 p-lg-2 gx-2 ">
+                <div class="col-lg-12">
+                    <!-- menu -->
+                    @foreach (var product in Model)
+                    {
+                            @await Html.PartialAsync("Partials/Site/_ProductCard", product)
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
