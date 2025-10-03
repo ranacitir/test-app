@@ -11,18 +11,20 @@
 			<div class="col-lg-1 col-md-2">
 				<img src="../img/@Model.Image" alt="@Model.Name" class="card-img">
 			</div>
-			<div class="col-lg-10 col-md-8  align-content-center float-lg-start responsive-button">
+			<div class="col-lg-9 col-md-8  align-content-center float-lg-start responsive-button">
 				<a asp-controller="Product" asp-action="Details" asp-route-id="@Model.Id" class="title text-truncate">@Model.Name</a>
 				<div class="price-wrap responsive-button">
 					<span class="price-discount">@Model.Mg</span>
 				</div>
 			</div>
-			<div class="col-lg-1 col-md-2 align-content-center responsive-button">
-				<a asp-controller="Product" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-light responsive-button ">
+			<div class="col-2 align-content-center responsive-button">
+				<a asp-controller="Product" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-dark ms-2 responsive-button float-end">
+					<i class="bi bi-trash"></i>
+				</a>
+				<a asp-controller="Product" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-light responsive-button float-end">
 					<i class="bi bi-justify"></i>
 				</a>
 			</div>
 		</div>
 	</div>
-	
 </div>

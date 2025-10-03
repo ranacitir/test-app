@@ -1,0 +1,22 @@
+﻿@model Product
+
+@{
+	Layout = "_Layout";
+}
+
+<div class="row">
+	<div class="col">
+		<div class="card">
+			<div class="card-body text-center">
+				<p>
+					@Model.Name isimli ürünü silmek istiyor musunuz?
+				</p>
+				<form asp-controller="Product" asp-action="DeleteConfirm" method="post">
+					<input type="hidden" name="id" value="@Model.Id" />
+					<button type="submit" class="btn btn-dark">Sil</button>
+					<a class="btn btn-light" asp-controller="Home" asp-action="Index">İptal</a>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

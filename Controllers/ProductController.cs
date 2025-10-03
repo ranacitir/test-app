@@ -37,10 +37,18 @@ namespace test_app.Controllers
         // POST: ProductController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ProductAddModel model)
+        public async Task<IActionResult> Create(ProductAddModel model)
         {
             if (ModelState.IsValid)
             {
+                var fileName = Path.GetRandomFileName() + ".jpg";
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", fileName);
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await model.Image!.CopyToAsync(stream);
+                }
+
                 var entity = new Product
                 {
                     Name = model.Name,
@@ -48,7 +56,7 @@ namespace test_app.Controllers
                     Mg = model.Mg,
                     Dose = model.Dose,
                     TotalMg = model.TotalMg,
-                    Image = model.Image,
+                    Image = fileName,
                     CategoryId = model.CategoryId,
                     SideEffects = model.SideEffects,
                     Status = model.Status,
@@ -76,7 +84,7 @@ namespace test_app.Controllers
                 Mg = p.Mg,
                 Dose = p.Dose,
                 TotalMg = p.TotalMg,
-                Image = p.Image,
+                ImageName = p.Image,
                 CategoryId = p.CategoryId,
                 SideEffects = p.SideEffects,
                 Status = p.Status,
@@ -91,7 +99,7 @@ namespace test_app.Controllers
         // POST: ProductController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProductEditModel model)
+        public async Task<IActionResult> Edit(int id, ProductEditModel model, IFormFile file)
         {
             if (id != model.Id)
             {
@@ -102,6 +110,17 @@ namespace test_app.Controllers
 
             if(entity != null)
             {
+                if (file.Length > 0)
+                {
+                    var fileName = file.FileName + ".jpg";
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", fileName);
+                    
+                    await using FileStream stream = new(path, FileMode.Create);
+                    await file.CopyToAsync(stream);
+
+                    entity.Image = fileName;
+                }
+
                 entity.Name = model.Name;
                 entity.Description = model.Description;
                 entity.Mg = model.Mg;
@@ -112,7 +131,9 @@ namespace test_app.Controllers
                 entity.Status = model.Status;
 
                 _dataContext.SaveChanges();
-                
+
+                TempData["Message"] = $"{entity.Name} adlı ürün güncellendi";
+
                 return RedirectToAction("Index", "Home");
             }
                         
@@ -121,24 +142,44 @@ namespace test_app.Controllers
         }
 
         // GET: ProductController/Delete/5
-        public ActionResult Delete(int id)
+        [HttpGet]
+        public IActionResult Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var entity = _dataContext.Products.FirstOrDefault(i => i.Id == id);
+
+            if (entity != null)
+            {
+                return View(entity);
+            }
+
+            return RedirectToAction("Index");
         }
 
         // POST: ProductController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult DeleteConfirm(int? id, IFormCollection collection)
         {
-            try
+            if (id == null)
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
-            catch
+
+            var entity = _dataContext.Products.FirstOrDefault(i => i.Id == id);
+
+            if(entity != null)
             {
-                return View();
+                _dataContext.Products.Remove(entity);
+                _dataContext.SaveChanges();
+                TempData["Message"] = $"{entity.Name} ürünü silindi";
             }
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

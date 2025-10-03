@@ -1,11 +1,15 @@
 ﻿@using test_app.Models.Account
 @model AccountLoginModel
 
+@{
+    ViewData["Title"] = "Login";
+}
+
 <section>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-7">
-                <div class="card card-body">
+                <div class="card card-body t-card">
                     <form method="post">
                         <div asp-validation-summary="All" class="text-danger"></div>
                         <div class="mb-3">
@@ -24,8 +28,8 @@
                             <span asp-validation-for="RememberMe" class="text-danger"></span>
                         </div>
                         <div align="right" class="text-align-right">
-                            <a asp-controller="Account" asp-action="ForgotPassword" class="btn btn-warning">Şifremi Ununttum</a>
-                            <button type="submit" class="btn btn-primary">Giriş</button>
+                            <a asp-controller="Account" asp-action="ForgotPassword" class="btn btn-dark">Şifremi Ununttum</a>
+                            <button type="submit" class="btn btn-light">Giriş</button>
                         </div>
 
                     </form>
